@@ -17,10 +17,10 @@ const Navbar2 = ({ setIsOpen }) => {
          className={`flex items-center bg-[#0C2556] justify-between h-16 px-10  fixed w-full  top-0 z-[999]  shadow-2xl `}
       >
          <div className="text-white  font-bold uppercase text-2xl flex gap-3 items-center justify-center ">
-            <h2>ESKOOLY</h2>
+            <h2>Mega Food</h2>
             <FaBarsStaggered
                onClick={() => setIsOpen((prev) => !prev)}
-               className={`text-2xl left-[150px] font-bold text-red-500  absolute top-5 
+               className={`text-2xl left-[200px] font-bold text-red-500  absolute top-5 
             `}
             ></FaBarsStaggered>
          </div>
