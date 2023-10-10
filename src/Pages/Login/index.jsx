@@ -16,7 +16,10 @@ const Login = () => {
       password: "",
    });
    const location = useLocation();
-   const from = location?.state?.from?.pathname || "/dashboard";
+   console.log(location);
+
+   const from = location?.state?.from.pathname || "/dashboard";
+   console.log(from);
    const navigate = useNavigate();
 
    if (user?.email && user?.status === "active" && user?.role === "admin") {
@@ -77,13 +80,13 @@ const Login = () => {
          if (loginData?.email && loginData?.password) {
             const res = await fetch(`${baseURL}/user/login`, {
                method: "POST",
-               headers:{
-                  "content-type":"application/json", 
+               headers: {
+                  "content-type": "application/json",
                },
                body: JSON.stringify(loginData),
             });
             const data = await res.json();
-               console.log(data);
+            console.log(data);
             if (data?.status === "success") {
                console.log(data.data);
                localStorage.setItem("accessToken", data.data.accessToken);

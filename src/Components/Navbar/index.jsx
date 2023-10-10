@@ -6,7 +6,7 @@ import { FaBarsStaggered } from "react-icons/fa6";
 import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
 
 const Navbar = () => {
-   const { user, setUser, setIsOpen, logOut } = useContext(AuthContext);
+   const { user,  setIsOpen, logOut } = useContext(AuthContext);
 
    return (
       <nav
