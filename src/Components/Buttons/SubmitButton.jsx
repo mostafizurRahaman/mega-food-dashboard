@@ -1,9 +1,14 @@
 /* eslint-disable react/prop-types */
-const SubmitButton = ({children, className, disabled}) => {
+const SubmitButton = ({ text, className, disabled }) => {
    return (
-      <div className="flex justify-center ">
-         <button className={` px-7 capitalize inline-block py-2 rounded-full ${className} ${disabled  ? 'bg-red-500': ""}`} disabled={disabled}>{children}</button>
-      </div>
+      <button
+         className={`px-5 rounded-full md:w-auto w-full text-base py-2 bg-primary md:mt-5 text-secondary block ${
+            disabled ? "cursor-not-allowed" : "cursor-pointer"
+         } ${className}`}
+         disabled={disabled}
+      >
+         {text}
+      </button>
    );
 };
 

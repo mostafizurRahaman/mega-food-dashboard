@@ -3,6 +3,7 @@
 import { useState } from "react";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
+
 const InputBox = ({ type, name, onChange, placeholder, icon, error }) => {
    const [isFocus, setFocus] = useState(false); 
 
