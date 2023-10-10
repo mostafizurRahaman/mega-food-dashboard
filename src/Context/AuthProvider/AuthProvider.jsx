@@ -7,8 +7,7 @@ const AuthProvider = ({ children }) => {
    const [user, setUser] = useState(null);
    const [loading, setLoading] = useState(true);
    const [isOpen, setIsOpen] = useState(false);
-   const accessToken = import.meta.env.VITE_TOKEN;
-   const authInfo = { isOpen, setIsOpen, loading, user };
+   const accessToken = localStorage.getItem("accessToken");
 
    //  user status observer:
    useEffect(() => {
@@ -30,9 +29,18 @@ const AuthProvider = ({ children }) => {
          .catch((err) => {
             console.log(err);
             setLoading(false);
+         })
+         .finally(() => {
+            setLoading(false);
          });
    }, [accessToken]);
 
+   const logOut = () => {
+      localStorage.removeItem("accessToken");
+      setUser(null);
+   };
+
+   const authInfo = { isOpen, setIsOpen, loading, user, setUser, logOut };
    return (
       <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
    );
