@@ -2,19 +2,17 @@
 import { TbArrowBadgeRightFilled } from "react-icons/tb";
 import { NavLink } from "react-router-dom";
 
-const LinkNav = ({ path, title, icon }) => {
+const LinkNav = ({ path, title, icon, style }) => {
    return (
       <NavLink
          to={path}
-         className={({ isActive }) =>
+         className={`${({ isActive }) =>
             isActive
-               ? "text-green-400 flex items-center  space-x-3 rounded-md"
-               : " flex items-center  space-x-3 rounded-md"
-         }
+               ? "text-green-400 flex items-center  justify-start  rounded-md"
+               : " flex items-center  space-x-3 rounded-md text-accent "}  `}
       >
-         {/* {icon && icon} */}
-         <TbArrowBadgeRightFilled/>
-         <span className="text-xs">{title}</span>
+         {icon ? icon : <TbArrowBadgeRightFilled />}
+         <span className={`${style ? style : "text-xs"}`}>{title}</span>
       </NavLink>
    );
 };

@@ -1,36 +1,38 @@
 import { createBrowserRouter } from "react-router-dom";
-import Login from "../../Pages/Login";
-import Dashboard from "../../Pages/Dashboard";
-import AddTable from "../../Pages/AddTable";
-import AddCategory from "../../Pages/AddCategory";
+import MainLayout from "../../Layouts/MainLayout/MainLayout";
 import DashboardLayout from "../../Layouts/DashboardLayout";
-import StudentInformation from "../../Pages/StudentInformation/";
+import Dashboard from "../../Pages/Dashboard";
+import Login from "../../Pages/Login";
+import Category from "../../Pages/Category";
+import SubCategory from "../../Pages/SubCategory";
 
 export const routes = createBrowserRouter([
    {
       path: "/",
-      element: <DashboardLayout />,
+      element: <MainLayout></MainLayout>,
       children: [
          {
+            path: "/",
+            element: <Login></Login>,
+         },
+         {
             path: "/dashboard",
-            element: <Dashboard />,
-         },
-         {
-            path: "/dashboard/addtable",
-            element: <AddTable></AddTable>,
-         },
-         {
-            path: "/dashboard/addcategory",
-            element: <AddCategory></AddCategory>,
-         },
-         {
-            path: "/dashboard/student-admission",
-            element: <StudentInformation></StudentInformation>,
+            element: <DashboardLayout></DashboardLayout>,
+            children: [
+               {
+                  path: "/dashboard",
+                  element: <Dashboard />,
+               },
+               {
+                  path: "/dashboard/create-category",
+                  element: <Category />,
+               },
+               {
+                  path: "/dashboard/create-subcategory",
+                  element: <SubCategory />,
+               },
+            ],
          },
       ],
-   },
-   {
-      path: "/login",
-      element: <Login></Login>,
    },
 ]);

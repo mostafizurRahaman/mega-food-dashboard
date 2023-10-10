@@ -1,34 +1,25 @@
 import LinkNav from "../LinkNav";
-import SummeryDetails from "../SummeryDetails/SummeryDetails";
-import ProfileInfo from "../ProfileInfo";
-import { FiSettings } from "react-icons/fi";
 
-const Siderbar = () => {
+import { BiCategory } from "react-icons/bi";
+const SideBar = () => {
    return (
-      <div className=" w-full pb-3  ">
-         <ProfileInfo></ProfileInfo>
-         <div className="px-2 mt-5 capitalize ">
-            <SummeryDetails
-               groupName="Settings"
-               className="h-0"
-               icon={<FiSettings></FiSettings>}
-            >
-               <LinkNav
-                  path="/dashboard/category"
-                  title="Add Category"
-               ></LinkNav>
-               <LinkNav
-                  path="/dashboard/sub-category"
-                  title="Add Sub Category"
-               ></LinkNav>
-               <LinkNav
-                  path="/dashboard/add-products"
-                  title="Add products"
-               ></LinkNav>
-            </SummeryDetails>
+      <div className=" w-full   ">
+         <div className="px-2 my-5 mb-20 capitalize  ">
+            <LinkNav
+               title="Create  Category"
+               path="create-category"
+               icon={<BiCategory size={17} />}
+               style="text-base "
+            />
+            <LinkNav
+               title="create sub category"
+               path="create-subcategory"
+               icon={<BiCategory size={17} />}
+               style="text-base"
+            />
          </div>
       </div>
    );
 };
 
-export default Siderbar;
+export default SideBar;

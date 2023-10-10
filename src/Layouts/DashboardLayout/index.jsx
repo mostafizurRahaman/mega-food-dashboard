@@ -1,26 +1,27 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { Outlet } from "react-router-dom";
-import Navbar2 from "../../Components/Navbar";
+import { SideBar } from "../../Components";
+import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
 
-import Siderbar from "../../Components/Sidebar";
 const DashboardLayout = () => {
-   const [isOpen, setIsOpen] = useState(true);
+   const { isOpen } = useContext(AuthContext);
    return (
       <div className="">
-         <Navbar2 setIsOpen={setIsOpen}></Navbar2>
          <div className={` flex items-start  relative  `}>
             <div
-               className={`min-w-[230px] duration-300 overflow-y-scroll bg-[#0C2556] p-3 min-h-screen  top-16  absolute  left-0  ${
-                  !isOpen
-                     ? "md:absolute top-20   transition-all left-[-999px]"
-                     : "md:fixed "
+               className={`min-w-[230px] duration-300 transition-all  overflow-y-scroll bg-secondary shadow-[5px_5px_5px_#ddd]  z-[99]  p-3 min-h-screen  max-h-screen top-20  fixed  left-0   ${
+                  !isOpen ? "md:absolute top-20    left-[-999px]" : "md:fixed "
                } `}
             >
-               <Siderbar></Siderbar>
+               <SideBar></SideBar>
             </div>
-            {isOpen && <div className="hidden lg:block lg:min-w-[230px]"></div>}
-            <div className="w-full h-screen py-5 mt-10 ">
-               <Outlet></Outlet>
+            {isOpen && (
+               <div className="hidden md:block  md:min-w-[230px]"></div>
+            )}
+            <div className="w-full  py-24 px-5 ">
+               <div className="h-screen ">
+                  <Outlet></Outlet>
+               </div>
             </div>
          </div>
       </div>
