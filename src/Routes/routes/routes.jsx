@@ -5,6 +5,7 @@ import Dashboard from "../../Pages/Dashboard";
 import Login from "../../Pages/Login";
 import Category from "../../Pages/Category";
 import SubCategory from "../../Pages/SubCategory";
+import PrivateRoute from "../PrivateRoute/PrivateRoute";
 
 export const routes = createBrowserRouter([
    {
@@ -17,7 +18,11 @@ export const routes = createBrowserRouter([
          },
          {
             path: "/dashboard",
-            element: <DashboardLayout></DashboardLayout>,
+            element: (
+               <PrivateRoute>
+                  <DashboardLayout></DashboardLayout>
+               </PrivateRoute>
+            ),
             children: [
                {
                   path: "/dashboard",
