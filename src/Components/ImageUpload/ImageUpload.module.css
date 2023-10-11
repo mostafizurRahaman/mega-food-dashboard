@@ -1,0 +1,6 @@
+::file-selector-button {
+   display: none;
+}
+::-webkit-file-upload-button {
+   display: none;
+}

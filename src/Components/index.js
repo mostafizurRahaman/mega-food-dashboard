@@ -13,7 +13,7 @@ import ProfileInfo from "./ProfileInfo";
 import TableCol from "./TableCol";
 import TableHeader from "./TableHeader";
 import TableRow from "./TableRow";
-
+import ImageUpload  from "./ImageUpload";
 export {
    SummeryDetails,
    LinkNav,
@@ -30,4 +30,5 @@ export {
    TableCol,
    TableRow,
    TableHeader,
+   ImageUpload
 };

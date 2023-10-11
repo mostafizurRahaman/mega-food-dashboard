@@ -1,4 +1,4 @@
-import { InputText, SubmitButton } from "../../Components";
+import { ErrorMessage, InputText, SubmitButton } from "../../Components";
 import { useContext, useState } from "react";
 import { baseURL } from "../../Configs/libs";
 import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
@@ -14,12 +14,12 @@ const Login = () => {
    const [errors, setErrors] = useState({
       email: "",
       password: "",
+      general: "",
    });
    const location = useLocation();
-   console.log(location);
 
    const from = location?.state?.from.pathname || "/dashboard";
-   console.log(from);
+
    const navigate = useNavigate();
 
    if (user?.email && user?.status === "active" && user?.role === "admin") {
@@ -75,6 +75,8 @@ const Login = () => {
 
    const handleLogin = async (e) => {
       e.preventDefault();
+      console.log(loginData);
+      setErrors({ ...errors, general: "" });
       const form = e.target;
       try {
          if (loginData?.email && loginData?.password) {
@@ -93,19 +95,23 @@ const Login = () => {
                setUser(data.data);
                toast.success("User login successfully");
                form.reset();
+            } else {
+               setErrors({ ...errors, general: data.message });
             }
          }
       } catch (err) {
          console.log(err);
+         setErrors({ ...errors, general: err.message });
       }
    };
    return (
-      <div className="flex md:min-h-screen  flex-col gap-5 items-center justify-center">
+      <div className="flex min-h-screen  flex-col gap-5 items-center justify-center">
          <form
             onSubmit={handleLogin}
-            className="w-[400px] px-5 rounded-lg py-10 bg-primary gap-3 flex flex-col items-center  "
+            className="w-[400px] px-7  rounded-lg py-10 bg-secondary gap-3 flex flex-col items-center 
+             shadow-[5px_3px_3px_3px_#ddd] hover:shadow-[-5px_-3px_3px_3px_#ddd] duration-500 transition-all "
          >
-            <h2 className="text-xl font-medium text-secondary capitalize text-center">
+            <h2 className="text-xl font-medium text-black capitalize text-center">
                login in
             </h2>
             <InputText
@@ -123,13 +129,15 @@ const Login = () => {
                error={errors.password}
                styles="text-lg"
                onChange={handlePassword}
+               
             />
 
             <SubmitButton
                text="login"
                disabled={!loginData.email || !loginData.password}
-               className=" bg-secondary  text-black inline-block  w-[100px]  "
+               className=" bg-primary  text-black inline-block  w-[100px]  "
             />
+            {errors.general && <ErrorMessage message={errors.general} />}
          </form>
       </div>
    );
