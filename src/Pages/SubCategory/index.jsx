@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import {
+   ActionButton,
    ImageUpload,
    InputSelectionObj,
    InputText,
@@ -161,10 +162,69 @@ const SubCategory = () => {
    console.log(subCategory);
    return (
       <div>
-         <div className="flex items-center justify-center"></div>
+         <div className="flex items-center justify-between">
+            <h1 className="text-xl text-secondary font-bold uppercase  md:col-span-3 ">
+               Create Subcategory
+            </h1>
+            <ActionButton
+               text="create new"
+               containerStyles=" text-sm hover:text-secondary text-black bg-secondary rounded-3xl hover tracking-widest py-2 capitalize font-semibold hover:bg-primary "
+            ></ActionButton>
+         </div>
+         <div className="my-5">
+            <TableHeader
+               containerStyles="bg-secondary table-zebra"
+               fields={[
+                  "S.I",
+                  "name",
+                  "path",
+                  "banner",
+                  "category",
+                  "createdBy",
+                  "updatedBy",
+                  "createdAt",
+                  "updatedAt",
+                  "Action",
+               ]}
+            >
+               {subCategories?.map((item, idx) => (
+                  <TableRow key={idx + 1}>
+                     <TableCol>{idx}</TableCol>
+                     <TableCol>{item?.name}</TableCol>
+                     <TableCol styles="lowercase">{item.path}</TableCol>
+                     <TableCol styles="">
+                        <img
+                           src={item.banner}
+                           className="w-20 mx-auto"
+                           alt={item.name}
+                        />
+                     </TableCol>
+                     <TableCol>{item?.category?.name}</TableCol>
+                     <TableCol>{item?.createdBy?.name}</TableCol>
+                     <TableCol>{item?.updatedBy?.name}</TableCol>
+                     <TableCol>
+                        {format(new Date(item.createdAt), "dd MMM yyyy")}
+                     </TableCol>
+                     <TableCol>
+                        {format(new Date(item?.updatedAt), "dd MMM yyyy")}
+                     </TableCol>
+                     <TableCol>
+                        <div className="flex items-center justify-center ">
+                           <BsTrashFill
+                              size={16}
+                              className="text-red-500 "
+                           ></BsTrashFill>
+                           <TiEdit className="text-primary" size={18}></TiEdit>
+                        </div>
+                     </TableCol>
+                  </TableRow>
+               ))}
+            </TableHeader>
+         </div>
+
          <form
             onSubmit={handleSubCategory}
-            className="flex gap-3  flex-col items-start justify-center md:justify-between"
+            className="flex gap-3  flex-col items-start justify-center md:justify-between bg-secondary p-7 rounded-md mb-10"
          >
             <div className="gap-3 grid grid-cols-1 md:grid-cols-3 w-full">
                <h1 className="text-xl font-bold uppercase  md:col-span-3">
@@ -222,56 +282,6 @@ const SubCategory = () => {
                }
             />
          </form>
-         <div>
-            <TableHeader
-               fields={[
-                  "S.I",
-                  "name",
-                  "path",
-                  "banner",
-                  "category",
-                  "createdBy",
-                  "updatedBy",
-                  "createdAt",
-                  "updatedAt",
-                  "Action",
-               ]}
-               containerStyles="my-10"
-            >
-               {subCategories?.map((item, idx) => (
-                  <TableRow key={idx + 1}>
-                     <TableCol>{idx}</TableCol>
-                     <TableCol>{item?.name}</TableCol>
-                     <TableCol styles="lowercase">{item.path}</TableCol>
-                     <TableCol styles="">
-                        <img
-                           src={item.banner}
-                           className="w-20 mx-auto"
-                           alt={item.name}
-                        />
-                     </TableCol>
-                     <TableCol>{item?.category?.name}</TableCol>
-                     <TableCol>{item?.createdBy?.name}</TableCol>
-                     <TableCol>{item?.updatedBy?.name}</TableCol>
-                     <TableCol>
-                        {format(new Date(item.createdAt), "dd MMM yyyy")}
-                     </TableCol>
-                     <TableCol>
-                        {format(new Date(item?.updatedAt), "dd MMM yyyy")}
-                     </TableCol>
-                     <TableCol>
-                        <div className="flex items-center justify-center ">
-                           <BsTrashFill
-                              size={16}
-                              className="text-red-500 "
-                           ></BsTrashFill>
-                           <TiEdit className="text-primary" size={18}></TiEdit>
-                        </div>
-                     </TableCol>
-                  </TableRow>
-               ))}
-            </TableHeader>
-         </div>
       </div>
    );
 };

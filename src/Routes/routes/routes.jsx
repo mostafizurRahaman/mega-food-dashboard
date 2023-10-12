@@ -6,6 +6,7 @@ import Login from "../../Pages/Login";
 import Category from "../../Pages/Category";
 import SubCategory from "../../Pages/SubCategory";
 import PrivateRoute from "../PrivateRoute/PrivateRoute";
+import Product from "../../Pages/Product/Product";
 
 export const routes = createBrowserRouter([
    {
@@ -35,6 +36,10 @@ export const routes = createBrowserRouter([
                {
                   path: "/dashboard/create-subcategory",
                   element: <SubCategory />,
+               },
+               {
+                  path: "/dashboard/products",
+                  element: <Product />,
                },
             ],
          },

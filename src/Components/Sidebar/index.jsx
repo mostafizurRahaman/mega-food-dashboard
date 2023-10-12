@@ -17,6 +17,12 @@ const SideBar = () => {
                icon={<BiCategory size={17} />}
                style="text-base"
             />
+            <LinkNav
+               title="products"
+               path="products"
+               icon={<BiCategory size={17} />}
+               style="text-base"
+            />
          </div>
       </div>
    );

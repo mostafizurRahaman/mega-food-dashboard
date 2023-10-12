@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import format from "date-fns/format";
 import {
+   ActionButton,
    ImageUpload,
    InputText,
    SubmitButton,
@@ -148,14 +149,74 @@ const Category = () => {
 
    return (
       <div>
-         <div className="flex items-center justify-center">
-            <h1 className="text-xl font-bold uppercase mb-5">
-               Create Category
+         <div className="flex items-center justify-between">
+            <h1 className="text-xl text-secondary   text-start font-semibold uppercase mb-5">
+               Product Category
             </h1>
+            <ActionButton
+               text="create new"
+               containerStyles=" text-sm hover:text-secondary text-black bg-secondary rounded-3xl hover tracking-widest py-2 capitalize font-semibold hover:bg-primary "
+            ></ActionButton>
+         </div>
+         <div>
+            <TableHeader
+               fields={[
+                  "S.I",
+                  "name",
+                  "path",
+                  "logo",
+                  "banner",
+                  "createdBy",
+                  "updatedBy",
+                  "createdAt",
+                  "updatedAt",
+                  "Action",
+               ]}
+               containerStyles="bg-secondary table "
+            >
+               {categories?.map((item, idx) => (
+                  <TableRow key={idx + 1}>
+                     <TableCol>{idx}</TableCol>
+                     <TableCol>{item?.name}</TableCol>
+                     <TableCol styles="lowercase">{item.path}</TableCol>
+                     <TableCol styles="">
+                        <img
+                           src={item.logo}
+                           className="w-1/4 mx-auto"
+                           alt={item.name}
+                        />
+                     </TableCol>
+                     <TableCol styles="">
+                        <img
+                           src={item?.banner}
+                           className="w-20 h-5 mx-auto"
+                           alt={item.name}
+                        />
+                     </TableCol>
+                     <TableCol>{item?.createdBy?.name}</TableCol>
+                     <TableCol>{item?.updatedBy?.name}</TableCol>
+                     <TableCol>
+                        {format(new Date(item.createdAt), "dd MMM yyyy")}
+                     </TableCol>
+                     <TableCol>
+                        {format(new Date(item?.updatedAt), "dd MMM yyyy")}
+                     </TableCol>
+                     <TableCol>
+                        <div className="flex items-center justify-center ">
+                           <BsTrashFill
+                              size={16}
+                              className="text-red-500 "
+                           ></BsTrashFill>
+                           <TiEdit className="text-primary" size={18}></TiEdit>
+                        </div>
+                     </TableCol>
+                  </TableRow>
+               ))}
+            </TableHeader>
          </div>
          <form
             onSubmit={handleCategory}
-            className="flex gap-3  flex-col items-start justify-center md:justify-between"
+            className="flex gap-3  flex-col items-start justify-center md:justify-between bg-secondary p-7 rounded-md mt-5"
          >
             <div className=" grid grid-cols-2 gap-3  w-full">
                <InputText
@@ -216,62 +277,6 @@ const Category = () => {
                }
             />
          </form>
-         <div>
-            <TableHeader
-               fields={[
-                  "S.I",
-                  "name",
-                  "path",
-                  "logo",
-                  "banner",
-                  "createdBy",
-                  "updatedBy",
-                  "createdAt",
-                  "updatedAt",
-                  "Action",
-               ]}
-               containerStyles="my-10"
-            >
-               {categories?.map((item, idx) => (
-                  <TableRow key={idx + 1}>
-                     <TableCol>{idx}</TableCol>
-                     <TableCol>{item?.name}</TableCol>
-                     <TableCol styles="lowercase">{item.path}</TableCol>
-                     <TableCol styles="">
-                        <img
-                           src={item.logo}
-                           className="w-1/4 mx-auto"
-                           alt={item.name}
-                        />
-                     </TableCol>
-                     <TableCol styles="">
-                        <img
-                           src={item?.banner}
-                           className="w-20 h-auto mx-auto"
-                           alt={item.name}
-                        />
-                     </TableCol>
-                     <TableCol>{item?.createdBy?.name}</TableCol>
-                     <TableCol>{item?.updatedBy?.name}</TableCol>
-                     <TableCol>
-                        {format(new Date(item.createdAt), "dd MMM yyyy")}
-                     </TableCol>
-                     <TableCol>
-                        {format(new Date(item?.updatedAt), "dd MMM yyyy")}
-                     </TableCol>
-                     <TableCol>
-                        <div className="flex items-center justify-center ">
-                           <BsTrashFill
-                              size={16}
-                              className="text-red-500 "
-                           ></BsTrashFill>
-                           <TiEdit className="text-primary" size={18}></TiEdit>
-                        </div>
-                     </TableCol>
-                  </TableRow>
-               ))}
-            </TableHeader>
-         </div>
       </div>
    );
 };

@@ -1,0 +1,11 @@
+.dashboardLayout {
+   background: linear-gradient(
+         to top,
+         rgba(48, 97, 221, 0.685),
+         rgba(0, 0, 0, 0.603)
+      ),
+      url("../../assets/dashboard.jpg") no-repeat;
+   background-position: center center;
+   background-size: cover;
+   background-attachment: fixed;
+}

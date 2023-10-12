@@ -1,6 +1,10 @@
 /* eslint-disable react/prop-types */
 const TableCol = ({ children, styles }) => {
-   return <td className={`${styles} border border-gray-600 px-1 text-xs`}>{children}</td>;
+   return (
+      <td className={`${styles}  border-r border-l border-r-white border-l-white px-1 py-1 md:py-[10px] text-xs`}>
+         {children}
+      </td>
+   );
 };
 
 export default TableCol;
