@@ -1,7 +1,17 @@
 import { useContext, useState } from "react";
-import { ImageUpload, InputText, SubmitButton } from "../../Components";
+import format from "date-fns/format";
+import {
+   ImageUpload,
+   InputText,
+   SubmitButton,
+   TableCol,
+   TableHeader,
+   TableRow,
+} from "../../Components";
 import { baseURL } from "../../Configs/libs";
 import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const Category = () => {
    const [category, setCategory] = useState({
@@ -16,6 +26,20 @@ const Category = () => {
       general: "",
    });
    const { user } = useContext(AuthContext);
+
+   const {
+      data: categories = [],
+      isLoading,
+      refetch,
+   } = useQuery({
+      queryKey: ["categories"],
+      queryFn: async () => {
+         const res = await fetch(`${baseURL}/category`);
+         const data = await res.json();
+         console.log(data.data.categories);
+         return data.data.categories;
+      },
+   });
 
    const handleInputText = (e) => {
       const name = e.target.name;
@@ -46,9 +70,10 @@ const Category = () => {
          });
 
          const data = await res.json();
-         console.log(data);
+
          if (data.status === "success") {
             setCategory({ ...category, logo: data.data.imageUrl });
+            toast.success("Category Logo Uploaded");
             setErrors({ ...errors, logo: "" });
          } else {
             setCategory({ ...category, logo: "" });
@@ -79,12 +104,17 @@ const Category = () => {
             body: JSON.stringify(newData),
          });
          const data = await res.json();
-         console.log(data);
+         if (data.status === "success") {
+            toast.success("Category Logo Uploaded");
+            refetch();
+         } else {
+            toast.error(data.message);
+         }
       } catch (err) {
          setErrors({ ...errors, general: err.message });
       }
    };
-   console.log(category);
+
    return (
       <div>
          <div className="flex items-center justify-center">
@@ -92,7 +122,7 @@ const Category = () => {
          </div>
          <form
             onSubmit={handleCategory}
-            className="flex gap-3  flex-col items-start justify-start md:justify-between"
+            className="flex gap-3  flex-col items-start justify-center md:justify-between"
          >
             <div className="flex  flex-col gap-3  md:w-1/2 w-full">
                <InputText
@@ -122,10 +152,49 @@ const Category = () => {
             </div>
             <SubmitButton
                text="create"
-               className="text-secondary"
+               className="text-secondary w-1/2 py-1 text-lg capitalize"
                disabled={!category?.name || !category?.path || !category?.logo}
             />
          </form>
+         <div>
+            <TableHeader
+               fields={[
+                  "S.I",
+                  "name",
+                  "path",
+                  "logo",
+                  "createdBy",
+                  "updatedBy",
+                  "createdAt",
+                  "updatedAt",
+                  "Action",
+               ]}
+               containerStyles="my-10"
+            >
+               {categories?.map((item, idx) => (
+                  <TableRow key={idx + 1}>
+                     <TableCol>{idx}</TableCol>
+                     <TableCol>{item?.name}</TableCol>
+                     <TableCol styles="lowercase">/{item.path}</TableCol>
+                     <TableCol styles="">
+                        <img
+                           src={item.logo}
+                           className="w-1/4 mx-auto"
+                           alt={item.name}
+                        />
+                     </TableCol>
+                     <TableCol>{item?.createdBy?.name}</TableCol>
+                     <TableCol>{item?.updatedBy?.name}</TableCol>
+                     <TableCol>
+                        {format(new Date(item.createdAt), "dd MMM yyyy")}
+                     </TableCol>
+                     <TableCol>
+                        {format(new Date(item?.updatedAt), "dd MMM yyyy")}
+                     </TableCol>
+                  </TableRow>
+               ))}
+            </TableHeader>
+         </div>
       </div>
    );
 };

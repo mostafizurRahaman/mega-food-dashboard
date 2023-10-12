@@ -3,7 +3,7 @@ const SubmitButton = ({ text, className, disabled }) => {
    return (
       <button
          className={` px-3 rounded-full text-base py-1 bg-primary  ${
-            disabled ? "cursor-not-allowed" : "cursor-pointer"
+            disabled ? "cursor-not-allowed bg-red-500" : "cursor-pointer"
          } ${className}`}
          disabled={disabled}
       >
