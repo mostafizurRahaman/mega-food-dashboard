@@ -46,7 +46,7 @@ const SubCategory = () => {
 
    const {
       data: subCategories = [],
-      isLoading: isSubCategoryLoading,
+      // isLoading,
       refetch,
    } = useQuery({
       queryKey: ["subCategories"],

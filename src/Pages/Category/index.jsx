@@ -32,7 +32,7 @@ const Category = () => {
 
    const {
       data: categories = [],
-      isLoading: isCategoryLoading,
+      // isLoading: isCategoryLoading,
       refetch,
    } = useQuery({
       queryKey: ["categories"],
@@ -142,9 +142,9 @@ const Category = () => {
    };
 
    console.log(category);
-   const handleDelete = (_id) => {};
+   // const handleDelete = (_id) => {};
 
-   const handleUpdate = (_id) => {};
+   // const handleUpdate = (_id) => {};
 
    return (
       <div>
