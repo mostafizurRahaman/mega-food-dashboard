@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 import {
    ActionButton,
+   CommonModal,
    ImageUpload,
    InputSelectionObj,
    InputText,
@@ -33,6 +34,7 @@ const SubCategory = () => {
       categoryId: "",
       general: "",
    });
+   const [showModal1, setModal1] = useState(true);
    const { user } = useContext(AuthContext);
 
    const { data: categories = [] } = useQuery({
@@ -151,6 +153,7 @@ const SubCategory = () => {
             refetch();
             e.target.reset();
             setSubCategory({});
+            setModal1(false);
          } else {
             toast.error(data.message);
          }
@@ -161,14 +164,16 @@ const SubCategory = () => {
 
    console.log(subCategory);
    return (
-      <div>
+      <div className="relativ">
          <div className="flex items-center justify-between">
             <h1 className="text-xl text-secondary font-bold uppercase  md:col-span-3 ">
-               Create Subcategory
+               Sub Categories
             </h1>
             <ActionButton
                text="create new"
-               containerStyles=" text-sm hover:text-secondary text-black bg-secondary rounded-3xl hover tracking-widest py-2 capitalize font-semibold hover:bg-primary "
+               containerStyles=" text-sm hover:text-secondary text-black bg-secondary rounded-3xl hover tracking-widest py-2 capitalize font-semibold hover:bg-primary 
+               "
+               handleAction={() => setModal1(true)}
             ></ActionButton>
          </div>
          <div className="my-5">
@@ -222,66 +227,70 @@ const SubCategory = () => {
             </TableHeader>
          </div>
 
-         <form
-            onSubmit={handleSubCategory}
-            className="flex gap-3  flex-col items-start justify-center md:justify-between bg-secondary p-7 rounded-md mb-10"
-         >
-            <div className="gap-3 grid grid-cols-1 md:grid-cols-3 w-full">
-               <h1 className="text-xl font-bold uppercase  md:col-span-3">
-                  Create Subcategory
-               </h1>
-               <InputText
-                  type="text"
-                  name="name"
-                  placeholder="sub category name"
-                  label="Sub category name"
-                  error={errors.name}
-                  onChange={handleInputText}
-               />
-               <InputText
-                  type="text"
-                  name="path"
-                  placeholder="sub category path"
-                  label=" sub category pathname"
-                  error={errors.path}
-                  onChange={handlePathName}
-               />
-               <InputSelectionObj
-                  label="select Category"
-                  data={subCategory}
-                  setData={setSubCategory}
-                  selectedId="categoryId"
-                  selectedName="categoryName"
-                  options={categories}
-                  selectOp="select category"
-               />
-            </div>
-            <div className="w-full flex flex-col gap-1 col-span-3">
-               <label
-                  htmlFor="banner"
-                  className=" font-semibold text-sm capitalize"
+         {showModal1 && (
+            <CommonModal setShow={setModal1}>
+               <form
+                  onSubmit={handleSubCategory}
+                  className="flex gap-3  flex-col items-start justify-center md:justify-between bg-secondary p-7 rounded-md "
                >
-                  Upload Banner
-               </label>
-               <ImageUpload
-                  id="banner"
-                  image={subCategory.banner}
-                  error={errors.banner}
-                  onChange={handleImageUpload}
-               />
-            </div>
-            <SubmitButton
-               text="create"
-               className="text-secondary w-[150px] mx-auto my-3 tracking-widest py-[6px] text-lg capitalize"
-               disabled={
-                  !subCategory?.name ||
-                  !subCategory?.path ||
-                  !subCategory?.banner ||
-                  !subCategory?.categoryId ||
-                  !subCategory?.categoryName
-               }
-            />
-         </form>
+                  <div className="gap-3 grid grid-cols-1 md:grid-cols-3 w-full">
+                     <h1 className="text-xl font-bold uppercase  md:col-span-3">
+                        Create Subcategory
+                     </h1>
+                     <InputText
+                        type="text"
+                        name="name"
+                        placeholder="sub category name"
+                        label="Sub category name"
+                        error={errors.name}
+                        onChange={handleInputText}
+                     />
+                     <InputText
+                        type="text"
+                        name="path"
+                        placeholder="sub category path"
+                        label=" sub category pathname"
+                        error={errors.path}
+                        onChange={handlePathName}
+                     />
+                     <InputSelectionObj
+                        label="select Category"
+                        data={subCategory}
+                        setData={setSubCategory}
+                        selectedId="categoryId"
+                        selectedName="categoryName"
+                        options={categories}
+                        selectOp="select category"
+                     />
+                  </div>
+                  <div className="w-full flex flex-col gap-1 col-span-3">
+                     <label
+                        htmlFor="banner"
+                        className=" font-semibold text-sm capitalize"
+                     >
+                        Upload Banner
+                     </label>
+                     <ImageUpload
+                        id="banner"
+                        image={subCategory.banner}
+                        error={errors.banner}
+                        onChange={handleImageUpload}
+                     />
+                  </div>
+                  <SubmitButton
+                     text="create"
+                     className="text-secondary w-[150px] mx-auto my-3 tracking-widest py-[6px] text-lg capitalize"
+                     disabled={
+                        !subCategory?.name ||
+                        !subCategory?.path ||
+                        !subCategory?.banner ||
+                        !subCategory?.categoryId ||
+                        !subCategory?.categoryName
+                     }
+                  />
+               </form>
+            </CommonModal>
+         )}
       </div>
    );
 };

@@ -9,12 +9,10 @@ const ImageUpload = ({ id, onChange, image, error, imageStyles }) => {
             <div className="w-full md:w-1/2">
                <label
                   htmlFor={id}
-                  className={`px-5 relative  h-44  border-dashed border-2 border-black flex justify-center items-center flex-col gap-1  rounded-xl `}
+                  className={`px-5 relative  h-24 md:h-44  border-dashed border-2 border-black flex justify-center items-center flex-col gap-1  rounded-xl `}
                >
                   <FiUpload className="text-5xl text-black order-2  "></FiUpload>
-                  <p className="text-base   text-black order-3 ">
-                     Choose File or drag file
-                  </p>
+                  <p className="text-base   text-black order-3 ">Choose File</p>
                   <input
                      id={id}
                      name={id}
@@ -25,7 +23,7 @@ const ImageUpload = ({ id, onChange, image, error, imageStyles }) => {
                   />
                </label>
             </div>
-            <div className="px-5py-2 border-dashed border-2 border-black flex justify-center items-center  h-44 flex-col gap-1 text-base  text-accent  rounded-xl w-full md:w-1/2 ">
+            <div className="px-5py-2 border-dashed border-2 border-black flex justify-center items-center h-24 md:h-44 flex-col gap-1 text-base  text-accent  rounded-xl w-full md:w-1/2 ">
                {image ? (
                   <img
                      src={image}

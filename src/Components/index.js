@@ -15,6 +15,7 @@ import TableHeader from "./TableHeader";
 import TableRow from "./TableRow";
 import ImageUpload from "./ImageUpload";
 import ActionButton from "./Buttons/ActionButton";
+import CommonModal from "./CommonModal/CommonModal";
 export {
    SummeryDetails,
    LinkNav,
@@ -33,4 +34,5 @@ export {
    TableHeader,
    ImageUpload,
    ActionButton,
+   CommonModal
 };

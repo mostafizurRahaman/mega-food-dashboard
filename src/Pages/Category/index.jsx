@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import format from "date-fns/format";
 import {
    ActionButton,
+   CommonModal,
    ImageUpload,
    InputText,
    SubmitButton,
@@ -30,6 +31,7 @@ const Category = () => {
       general: "",
    });
    const { user } = useContext(AuthContext);
+   const [showModal1, setShowModal1] = useState(false);
 
    const {
       data: categories = [],
@@ -148,7 +150,7 @@ const Category = () => {
    // const handleUpdate = (_id) => {};
 
    return (
-      <div>
+      <div className="relative">
          <div className="flex items-center justify-between">
             <h1 className="text-xl text-secondary   text-start font-semibold uppercase mb-5">
                Product Category
@@ -156,6 +158,7 @@ const Category = () => {
             <ActionButton
                text="create new"
                containerStyles=" text-sm hover:text-secondary text-black bg-secondary rounded-3xl hover tracking-widest py-2 capitalize font-semibold hover:bg-primary "
+               handleAction={() => setShowModal1(true)}
             ></ActionButton>
          </div>
          <div>
@@ -214,69 +217,74 @@ const Category = () => {
                ))}
             </TableHeader>
          </div>
-         <form
-            onSubmit={handleCategory}
-            className="flex gap-3  flex-col items-start justify-center md:justify-between bg-secondary p-7 rounded-md mt-5"
-         >
-            <div className=" grid grid-cols-2 gap-3  w-full">
-               <InputText
-                  type="text"
-                  name="name"
-                  placeholder="category name"
-                  label="category name"
-                  error={errors.name}
-                  onChange={handleInputText}
-               />
-               <InputText
-                  type="text"
-                  name="path"
-                  placeholder="category path"
-                  label="category pathname"
-                  error={errors.path}
-                  onChange={handlePathName}
-               />
 
-               <div className="w-full flex flex-col gap-1 ">
-                  <label
-                     htmlFor="banner"
-                     className=" font-semibold text-sm capitalize"
-                  >
-                     Upload logo
-                  </label>
-                  <ImageUpload
-                     id="logo"
-                     image={category.logo}
-                     error={errors.logo}
-                     onChange={handleImageUpload}
-                  />
-               </div>
-               <div className="w-full flex flex-col gap-1 ">
-                  <label
-                     htmlFor="banner"
-                     className=" font-semibold text-sm capitalize"
-                  >
-                     Upload Banner
-                  </label>
-                  <ImageUpload
-                     id="banner"
-                     image={category.banner}
-                     error={errors.banner}
-                     onChange={handleImageUpload}
-                  />
-               </div>
-            </div>
+         {showModal1 && (
+            <CommonModal containerStyles="md:w-[65%]" setShow={setShowModal1}>
+               <form
+                  onSubmit={handleCategory}
+                  className="flex gap-3  flex-col items-start justify-center md:justify-between bg-secondary p-7 rounded-md mt-5"
+               >
+                  <div className=" grid grid-cols-2 gap-3  w-full">
+                     <InputText
+                        type="text"
+                        name="name"
+                        placeholder="category name"
+                        label="category name"
+                        error={errors.name}
+                        onChange={handleInputText}
+                     />
+                     <InputText
+                        type="text"
+                        name="path"
+                        placeholder="category path"
+                        label="category pathname"
+                        error={errors.path}
+                        onChange={handlePathName}
+                     />
 
-            <SubmitButton
-               text="create"
-               className="text-secondary w-[150px] my-5 mx-auto py-1 text-lg capitalize"
-               disabled={
-                  !category?.name ||
-                  !category?.path ||
-                  !category?.logo ||
-                  !category?.banner
-               }
-            />
-         </form>
+                     <div className="w-full flex flex-col gap-1  ">
+                        <label
+                           htmlFor="banner"
+                           className=" font-semibold text-sm capitalize"
+                        >
+                           Upload logo
+                        </label>
+                        <ImageUpload
+                           id="logo"
+                           image={category.logo}
+                           error={errors.logo}
+                           onChange={handleImageUpload}
+                        />
+                     </div>
+                     <div className="w-full flex flex-col gap-1 ">
+                        <label
+                           htmlFor="banner"
+                           className=" font-semibold text-sm capitalize"
+                        >
+                           Upload Banner
+                        </label>
+                        <ImageUpload
+                           id="banner"
+                           image={category.banner}
+                           error={errors.banner}
+                           onChange={handleImageUpload}
+                        />
+                     </div>
+                  </div>
+
+                  <SubmitButton
+                     text="create"
+                     className="text-secondary w-[150px] my-5 mx-auto py-1 text-lg capitalize"
+                     disabled={
+                        !category?.name ||
+                        !category?.path ||
+                        !category?.logo ||
+                        !category?.banner
+                     }
+                  />
+               </form>
+            </CommonModal>
+         )}
       </div>
    );
 };
