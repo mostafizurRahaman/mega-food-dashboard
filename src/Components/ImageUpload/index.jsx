@@ -2,15 +2,14 @@
 import { FiUpload } from "react-icons/fi";
 import styles from "./ImageUpload.module.css";
 
-const ImageUpload = ({ id, onChange, image, error }) => {
+const ImageUpload = ({ id, onChange, image, error, imageStyles }) => {
    return (
       <div className="w-full">
          <div className="flex items-center md:flex-row flex-col  gap-3">
             <div className="w-full md:w-1/2">
                <label
                   htmlFor={id}
-                  className="px-5 relative  h-44  border-dashed border-2 border-black flex justify-center items-center flex-col gap-1  rounded-xl 
-         "
+                  className={`px-5 relative  h-44  border-dashed border-2 border-black flex justify-center items-center flex-col gap-1  rounded-xl `}
                >
                   <FiUpload className="text-5xl text-black order-2  "></FiUpload>
                   <p className="text-base   text-black order-3 ">
@@ -31,7 +30,7 @@ const ImageUpload = ({ id, onChange, image, error }) => {
                   <img
                      src={image}
                      alt=""
-                     className="w-auto p-3 object-contain"
+                     className={`${imageStyles} object-contain p-3`}
                   />
                ) : (
                   <p>Preview </p>

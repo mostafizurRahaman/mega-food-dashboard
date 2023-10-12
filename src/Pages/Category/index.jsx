@@ -12,24 +12,27 @@ import { baseURL } from "../../Configs/libs";
 import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
+import { BsTrashFill } from "react-icons/bs";
+import { TiEdit } from "react-icons/ti";
 const Category = () => {
    const [category, setCategory] = useState({
       name: "",
       path: "",
       logo: "",
+      banner: "",
    });
    const [errors, setErrors] = useState({
       name: "",
       path: "",
       logo: "",
+      banner: "",
       general: "",
    });
    const { user } = useContext(AuthContext);
 
    const {
       data: categories = [],
-      isLoading,
+      isLoading: isCategoryLoading,
       refetch,
    } = useQuery({
       queryKey: ["categories"],
@@ -53,14 +56,32 @@ const Category = () => {
       }
    };
 
+   const handlePathName = (e) => {
+      const name = e.target.name;
+      const value = e.target.value.trim().toLowerCase();
+      if (!value.length) {
+         setCategory({ ...category, [name]: "" });
+         setErrors({ ...errors, [name]: `${name} shouldn't be empty` });
+      } else if (!value.startsWith("/")) {
+         setCategory({ ...category, [name]: "" });
+         setErrors({ ...errors, [name]: `${name} must starts with /` });
+      } else if (!/^\/(?:[\w.-]+\/)*[\w.-]+$/.test(value)) {
+         setCategory({ ...category, [name]: "" });
+         setErrors({ ...errors, [name]: `enter a valid pathname` });
+      } else {
+         setCategory({ ...category, [name]: value });
+         setErrors({ ...errors, [name]: "" });
+      }
+   };
+
    const handleImageUpload = async (e) => {
-      // const name = e.target.name;
+      const name = e.target.name;
       const image = e.target.files[0];
       const formData = new FormData();
       formData.append("image", image);
       if (!image) {
-         setErrors({ ...errors, logo: "Please select an image" });
-         setCategory({ ...category, logo: "" });
+         setErrors({ ...errors, [name]: "Please select an image" });
+         setCategory({ ...category, [name]: "" });
          return;
       }
       try {
@@ -72,15 +93,15 @@ const Category = () => {
          const data = await res.json();
 
          if (data.status === "success") {
-            setCategory({ ...category, logo: data.data.imageUrl });
+            setCategory({ ...category, [name]: data.data.imageUrl });
             toast.success("Category Logo Uploaded");
-            setErrors({ ...errors, logo: "" });
+            setErrors({ ...errors, [name]: "" });
          } else {
-            setCategory({ ...category, logo: "" });
-            setErrors({ ...errors, logo: data.message });
+            setCategory({ ...category, [name]: "" });
+            setErrors({ ...errors, [name]: data.message });
          }
       } catch (err) {
-         setErrors({ ...errors, logo: err.message });
+         setErrors({ ...errors, [name]: err.message });
       }
    };
 
@@ -115,16 +136,23 @@ const Category = () => {
       }
    };
 
+   console.log(category);
+   const handleDelete = (_id) => {};
+
+   const handleUpdate = (_id) => {};
+
    return (
       <div>
          <div className="flex items-center justify-center">
-            <h1 className="text-2xl font-bold uppercase">Create Category</h1>
+            <h1 className="text-xl font-bold uppercase mb-5">
+               Create Category
+            </h1>
          </div>
          <form
             onSubmit={handleCategory}
             className="flex gap-3  flex-col items-start justify-center md:justify-between"
          >
-            <div className="flex  flex-col gap-3  md:w-1/2 w-full">
+            <div className=" grid grid-cols-2 gap-3  w-full">
                <InputText
                   type="text"
                   name="name"
@@ -139,21 +167,48 @@ const Category = () => {
                   placeholder="category path"
                   label="category pathname"
                   error={errors.path}
-                  onChange={handleInputText}
+                  onChange={handlePathName}
                />
+
+               <div className="w-full flex flex-col gap-1 ">
+                  <label
+                     htmlFor="banner"
+                     className=" font-semibold text-sm capitalize"
+                  >
+                     Upload logo
+                  </label>
+                  <ImageUpload
+                     id="logo"
+                     image={category.logo}
+                     error={errors.logo}
+                     onChange={handleImageUpload}
+                  />
+               </div>
+               <div className="w-full flex flex-col gap-1 ">
+                  <label
+                     htmlFor="banner"
+                     className=" font-semibold text-sm capitalize"
+                  >
+                     Upload Banner
+                  </label>
+                  <ImageUpload
+                     id="banner"
+                     image={category.banner}
+                     error={errors.banner}
+                     onChange={handleImageUpload}
+                  />
+               </div>
             </div>
-            <div className="w-1/2">
-               <ImageUpload
-                  id="logo"
-                  image={category.logo}
-                  error={errors.logo}
-                  onChange={handleImageUpload}
-               />
-            </div>
+
             <SubmitButton
                text="create"
-               className="text-secondary w-1/2 py-1 text-lg capitalize"
-               disabled={!category?.name || !category?.path || !category?.logo}
+               className="text-secondary w-[150px] my-5 mx-auto py-1 text-lg capitalize"
+               disabled={
+                  !category?.name ||
+                  !category?.path ||
+                  !category?.logo ||
+                  !category?.banner
+               }
             />
          </form>
          <div>
@@ -162,7 +217,8 @@ const Category = () => {
                   "S.I",
                   "name",
                   "path",
-                  "logo",
+                  "logo", 
+                  "banner", 
                   "createdBy",
                   "updatedBy",
                   "createdAt",
@@ -175,11 +231,18 @@ const Category = () => {
                   <TableRow key={idx + 1}>
                      <TableCol>{idx}</TableCol>
                      <TableCol>{item?.name}</TableCol>
-                     <TableCol styles="lowercase">/{item.path}</TableCol>
+                     <TableCol styles="lowercase">{item.path}</TableCol>
                      <TableCol styles="">
                         <img
                            src={item.logo}
                            className="w-1/4 mx-auto"
+                           alt={item.name}
+                        />
+                     </TableCol>
+                     <TableCol styles="">
+                        <img
+                           src={item?.banner}
+                           className="w-20 h-auto mx-auto"
                            alt={item.name}
                         />
                      </TableCol>
@@ -190,6 +253,15 @@ const Category = () => {
                      </TableCol>
                      <TableCol>
                         {format(new Date(item?.updatedAt), "dd MMM yyyy")}
+                     </TableCol>
+                     <TableCol>
+                        <div className="flex items-center justify-center ">
+                           <BsTrashFill
+                              size={16}
+                              className="text-red-500 "
+                           ></BsTrashFill>
+                           <TiEdit className="text-primary" size={18}></TiEdit>
+                        </div>
                      </TableCol>
                   </TableRow>
                ))}
