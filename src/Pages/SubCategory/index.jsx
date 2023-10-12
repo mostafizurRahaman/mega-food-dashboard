@@ -4,12 +4,17 @@ import {
    InputSelectionObj,
    InputText,
    SubmitButton,
+   TableCol,
+   TableHeader,
+   TableRow,
 } from "../../Components";
 import { baseURL } from "../../Configs/libs";
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
-import { FiFacebook } from "react-icons/fi";
+import { BsTrashFill } from "react-icons/bs";
+import { TiEdit } from "react-icons/ti";
+import { format } from "date-fns";
 
 const SubCategory = () => {
    const [subCategory, setSubCategory] = useState({
@@ -29,17 +34,27 @@ const SubCategory = () => {
    });
    const { user } = useContext(AuthContext);
 
-   const {
-      data: categories = [],
-      isLoading: isCategoryLoading,
-      refetch,
-   } = useQuery({
+   const { data: categories = [] } = useQuery({
       queryKey: ["categories"],
       queryFn: async () => {
          const res = await fetch(`${baseURL}/category`);
          const data = await res.json();
          console.log(data.data.categories);
          return data.data.categories;
+      },
+   });
+
+   const {
+      data: subCategories = [],
+      isLoading: isSubCategoryLoading,
+      refetch,
+   } = useQuery({
+      queryKey: ["subCategories"],
+      queryFn: async () => {
+         const res = await fetch(`${baseURL}/sub-category`);
+         const data = await res.json();
+         console.log(data.data.subCategories);
+         return data.data.subCategories;
       },
    });
 
@@ -66,7 +81,7 @@ const SubCategory = () => {
          setErrors({ ...errors, [name]: `${name} must starts with /` });
       } else if (!/^\/(?:[\w.-]+\/)*[\w.-]+$/.test(value)) {
          setSubCategory({ ...subCategory, [name]: "" });
-         setErrors({ ...errors, [name]: `enter a valid pathname` });
+         setErrors({ ...errors, [name]: `replace space with ( _ or -)` });
       } else {
          setSubCategory({ ...subCategory, [name]: value });
          setErrors({ ...errors, [name]: "" });
@@ -104,18 +119,24 @@ const SubCategory = () => {
       }
    };
 
-   const handleCategory = async (e) => {
+   const handleSubCategory = async (e) => {
       e.preventDefault();
       setErrors({ ...errors, general: "" });
       try {
          const newData = {
-            ...subCategory,
+            name: subCategory.name,
+            path: subCategory.path,
+            banner: subCategory.banner,
+            category: {
+               name: subCategory.categoryName,
+               id: subCategory.categoryId,
+            },
             createdBy: {
                name: user.firstName + " " + user?.lastName,
                id: user?._id,
             },
          };
-         const res = await fetch(`${baseURL}/category`, {
+         const res = await fetch(`${baseURL}/sub-category`, {
             method: "POST",
             headers: {
                "content-type": "application/json",
@@ -125,8 +146,10 @@ const SubCategory = () => {
          });
          const data = await res.json();
          if (data.status === "success") {
-            toast.success("Category Logo Uploaded");
+            toast.success(data.message);
             refetch();
+            e.target.reset();
+            setSubCategory({});
          } else {
             toast.error(data.message);
          }
@@ -140,7 +163,7 @@ const SubCategory = () => {
       <div>
          <div className="flex items-center justify-center"></div>
          <form
-            onSubmit={handleCategory}
+            onSubmit={handleSubCategory}
             className="flex gap-3  flex-col items-start justify-center md:justify-between"
          >
             <div className="gap-3 grid grid-cols-1 md:grid-cols-3 w-full">
@@ -199,13 +222,14 @@ const SubCategory = () => {
                }
             />
          </form>
-         {/* <div>
+         <div>
             <TableHeader
                fields={[
                   "S.I",
                   "name",
                   "path",
-                  "logo",
+                  "banner",
+                  "category",
                   "createdBy",
                   "updatedBy",
                   "createdAt",
@@ -214,18 +238,19 @@ const SubCategory = () => {
                ]}
                containerStyles="my-10"
             >
-               {categories?.map((item, idx) => (
+               {subCategories?.map((item, idx) => (
                   <TableRow key={idx + 1}>
                      <TableCol>{idx}</TableCol>
                      <TableCol>{item?.name}</TableCol>
-                     <TableCol styles="lowercase">/{item.path}</TableCol>
+                     <TableCol styles="lowercase">{item.path}</TableCol>
                      <TableCol styles="">
                         <img
-                           src={item.logo}
-                           className="w-1/4 mx-auto"
+                           src={item.banner}
+                           className="w-20 mx-auto"
                            alt={item.name}
                         />
                      </TableCol>
+                     <TableCol>{item?.category?.name}</TableCol>
                      <TableCol>{item?.createdBy?.name}</TableCol>
                      <TableCol>{item?.updatedBy?.name}</TableCol>
                      <TableCol>
@@ -246,7 +271,7 @@ const SubCategory = () => {
                   </TableRow>
                ))}
             </TableHeader>
-         </div> */}
+         </div>
       </div>
    );
 };

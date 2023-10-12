@@ -67,7 +67,10 @@ const Category = () => {
          setErrors({ ...errors, [name]: `${name} must starts with /` });
       } else if (!/^\/(?:[\w.-]+\/)*[\w.-]+$/.test(value)) {
          setCategory({ ...category, [name]: "" });
-         setErrors({ ...errors, [name]: `enter a valid pathname` });
+         setErrors({
+            ...errors,
+            [name]: `enter a valid pathname use ( _ or -)`,
+         });
       } else {
          setCategory({ ...category, [name]: value });
          setErrors({ ...errors, [name]: "" });
@@ -128,6 +131,8 @@ const Category = () => {
          if (data.status === "success") {
             toast.success("Category Logo Uploaded");
             refetch();
+            setCategory({});
+            e.target.reset();
          } else {
             toast.error(data.message);
          }
@@ -217,8 +222,8 @@ const Category = () => {
                   "S.I",
                   "name",
                   "path",
-                  "logo", 
-                  "banner", 
+                  "logo",
+                  "banner",
                   "createdBy",
                   "updatedBy",
                   "createdAt",
