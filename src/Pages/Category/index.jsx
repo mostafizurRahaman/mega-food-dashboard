@@ -10,7 +10,7 @@ import {
    TableHeader,
    TableRow,
 } from "../../Components";
-import { baseURL } from "../../Configs/libs";
+import { AccessToken, baseURL } from "../../Configs/libs";
 import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -126,7 +126,7 @@ const Category = () => {
             method: "POST",
             headers: {
                "content-type": "application/json",
-               authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+               authorization: `Bearer }`,
             },
             body: JSON.stringify(newData),
          });
@@ -144,8 +144,27 @@ const Category = () => {
       }
    };
 
-   console.log(category);
-   // const handleDelete = (_id) => {};
+   const handleDelete = async (_id) => {
+      try {
+         const res = await fetch(`${baseURL}/category/${_id}`, {
+            method: "delete",
+            headers: {
+               "content-type": "application/json",
+               authorization: `Bearer ${AccessToken}`,
+            },
+         });
+
+         const data = await res.json();
+         if (data.status === "success") {
+            toast.success(data.message);
+            refetch();
+         } else {
+            toast.error(data.message);
+         }
+      } catch (err) {
+         toast.error(err.message);
+      }
+   };
 
    // const handleUpdate = (_id) => {};
 
@@ -161,7 +180,7 @@ const Category = () => {
                handleAction={() => setShowModal1(true)}
             ></ActionButton>
          </div>
-         <div>
+         <div className="overflow-x-auto">
             <TableHeader
                fields={[
                   "S.I",
@@ -185,7 +204,7 @@ const Category = () => {
                      <TableCol styles="">
                         <img
                            src={item.logo}
-                           className="w-1/4 mx-auto"
+                           className="w-full h-[24px] mx-auto"
                            alt={item.name}
                         />
                      </TableCol>
@@ -196,22 +215,27 @@ const Category = () => {
                            alt={item.name}
                         />
                      </TableCol>
-                     <TableCol>{item?.createdBy?.name}</TableCol>
-                     <TableCol>{item?.updatedBy?.name}</TableCol>
-                     <TableCol>
+                     <TableCol styles="min-w-[80px]">
+                        {item?.createdBy?.name}
+                     </TableCol>
+                     <TableCol styles="min-w-[80px]">
+                        {item?.updatedBy?.name}
+                     </TableCol>
+                     <TableCol styles="min-w-[100px]">
                         {format(new Date(item.createdAt), "dd MMM yyyy")}
                      </TableCol>
-                     <TableCol>
+                     <TableCol styles="min-w-[100px]">
                         {format(new Date(item?.updatedAt), "dd MMM yyyy")}
                      </TableCol>
                      <TableCol>
-                        <div className="flex items-center justify-center ">
-                           <BsTrashFill
-                              size={16}
-                              className="text-red-500 "
-                           ></BsTrashFill>
-                           <TiEdit className="text-primary" size={18}></TiEdit>
-                        </div>
+                        {/* <div className="flex items-center justify-center "> */}
+                        <BsTrashFill
+                           onClick={() => handleDelete(item._id)}
+                           size={16}
+                           className="text-red-500 cursor-pointer "
+                        ></BsTrashFill>
+                        <TiEdit className="text-primary" size={18}></TiEdit>
+                        {/* </div> */}
                      </TableCol>
                   </TableRow>
                ))}
@@ -219,12 +243,15 @@ const Category = () => {
          </div>
 
          {showModal1 && (
-            <CommonModal containerStyles="md:w-[65%]" setShow={setShowModal1}>
+            <CommonModal
+               containerStyles="w-[90%] md:w-[60%]"
+               setShow={setShowModal1}
+            >
                <form
                   onSubmit={handleCategory}
-                  className="flex gap-3  flex-col items-start justify-center md:justify-between bg-secondary p-7 rounded-md mt-5"
+                  className="flex gap-3  flex-col items-start justify-center md:justify-between bg-secondary p-3 rounded-md mt-5"
                >
-                  <div className=" grid grid-cols-2 gap-3  w-full">
+                  <div className=" grid grid-cols-1 md:grid-cols-2 gap-3  w-full">
                      <InputText
                         type="text"
                         name="name"

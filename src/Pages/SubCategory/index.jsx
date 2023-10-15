@@ -10,7 +10,7 @@ import {
    TableHeader,
    TableRow,
 } from "../../Components";
-import { baseURL } from "../../Configs/libs";
+import { AccessToken, baseURL } from "../../Configs/libs";
 import { useQuery } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthProvider/AuthProvider";
@@ -34,7 +34,7 @@ const SubCategory = () => {
       categoryId: "",
       general: "",
    });
-   const [showModal1, setModal1] = useState(true);
+   const [showModal1, setModal1] = useState(false);
    const { user } = useContext(AuthContext);
 
    const { data: categories = [] } = useQuery({
@@ -162,7 +162,28 @@ const SubCategory = () => {
       }
    };
 
-   console.log(subCategory);
+   const handleDelete = async (_id) => {
+      try {
+         const res = await fetch(`${baseURL}/sub-category/${_id}`, {
+            method: "delete",
+            headers: {
+               "content-type": "application/json",
+               authorization: `Bearer ${AccessToken}`,
+            },
+         });
+
+         const data = await res.json();
+         if (data.status === "success") {
+            toast.success(data.message);
+            refetch();
+         } else {
+            toast.error(data.message);
+         }
+      } catch (err) {
+         toast.error(err.message);
+      }
+   };
+
    return (
       <div className="relativ">
          <div className="flex items-center justify-between">
@@ -194,13 +215,13 @@ const SubCategory = () => {
             >
                {subCategories?.map((item, idx) => (
                   <TableRow key={idx + 1}>
-                     <TableCol>{idx}</TableCol>
+                     <TableCol>{idx + 1}</TableCol>
                      <TableCol>{item?.name}</TableCol>
                      <TableCol styles="lowercase">{item.path}</TableCol>
                      <TableCol styles="">
                         <img
                            src={item.banner}
-                           className="w-20 mx-auto"
+                           className="w-20 h-5 mx-auto"
                            alt={item.name}
                         />
                      </TableCol>
@@ -216,6 +237,7 @@ const SubCategory = () => {
                      <TableCol>
                         <div className="flex items-center justify-center ">
                            <BsTrashFill
+                              onClick={() => handleDelete(item._id)}
                               size={16}
                               className="text-red-500 "
                            ></BsTrashFill>

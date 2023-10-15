@@ -2,14 +2,21 @@
 import { FiUpload } from "react-icons/fi";
 import styles from "./ImageUpload.module.css";
 
-const ImageUpload = ({ id, onChange, image, error, imageStyles }) => {
+const ImageUpload = ({
+   id,
+   onChange,
+   image,
+   error,
+   imageStyles,
+   isMultiple,
+}) => {
    return (
       <div className="w-full">
          <div className="flex items-center md:flex-row flex-col  gap-3">
             <div className="w-full md:w-1/2">
                <label
                   htmlFor={id}
-                  className={`px-5 relative  h-24 md:h-44  border-dashed border-2 border-black flex justify-center items-center flex-col gap-1  rounded-xl `}
+                  className={`px-5 relative  h-28 md:h-44  border-dashed border-2 border-black flex justify-center items-center flex-col gap-1  rounded-xl `}
                >
                   <FiUpload className="text-5xl text-black order-2  "></FiUpload>
                   <p className="text-base   text-black order-3 ">Choose File</p>
@@ -20,19 +27,31 @@ const ImageUpload = ({ id, onChange, image, error, imageStyles }) => {
                      onChange={onChange}
                      type="file"
                      accept="image/*"
+                     multiple={isMultiple}
                   />
                </label>
             </div>
-            <div className="px-5py-2 border-dashed border-2 border-black flex justify-center items-center h-24 md:h-44 flex-col gap-1 text-base  text-accent  rounded-xl w-full md:w-1/2 ">
+            <div className="px-5py-2 border-dashed border-2 border-black flex justify-center items-center h-28 md:h-44 flex-col gap-1 text-base  text-accent  rounded-xl w-full md:w-1/2 ">
                {image ? (
-                  <img
-                     src={image}
-                     alt=""
-                     className={`${imageStyles} object-contain p-3`}
-                  />
+                  Array.isArray(image) ? (
+                     <p className="flex items-center flex-col gap-1">
+                        {" "}
+                        <span className="text-4xl text-red-500">
+                           {image.length}
+                        </span>{" "}
+                        images uploaded
+                     </p>
+                  ) : (
+                     <img
+                        src={image}
+                        alt=""
+                        className={`${imageStyles} object-contain p-3`}
+                     />
+                  )
                ) : (
                   <p>Preview </p>
                )}
+               
             </div>
          </div>
          {error && (
