@@ -146,9 +146,11 @@ const Product = () => {
    });
 
    const { data: subCategories = [] } = useQuery({
-      queryKey: ["subCategories"],
+      queryKey: ["subCategories", product.categoryId],
       queryFn: async () => {
-         const res = await fetch(`${baseURL}/sub-category`);
+         const res = await fetch(
+            `${baseURL}/sub-category?category.id=${product?.categoryId}`
+         );
          const data = await res.json();
          console.log(data.data.subCategories);
          return data.data.subCategories;
