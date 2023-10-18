@@ -201,7 +201,7 @@ const Banner = () => {
             name: user?.firstName + " " + user?.lastName,
             id: user._id,
          },
-         offeredCategoryName,
+
       };
 
       // console.log(newBanner);
