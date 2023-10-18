@@ -136,6 +136,7 @@ const Category = () => {
             refetch();
             setCategory({});
             e.target.reset();
+            setShowModal1(false);
          } else {
             toast.error(data.message);
          }
@@ -228,14 +229,14 @@ const Category = () => {
                         {format(new Date(item?.updatedAt), "dd MMM yyyy")}
                      </TableCol>
                      <TableCol>
-                        {/* <div className="flex items-center justify-center "> */}
+                        <div className="flex items-center justify-center ">
                         <BsTrashFill
                            onClick={() => handleDelete(item._id)}
                            size={16}
                            className="text-red-500 cursor-pointer "
                         ></BsTrashFill>
                         <TiEdit className="text-primary" size={18}></TiEdit>
-                        {/* </div> */}
+                        </div>
                      </TableCol>
                   </TableRow>
                ))}

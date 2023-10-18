@@ -7,6 +7,7 @@ import Category from "../../Pages/Category";
 import SubCategory from "../../Pages/SubCategory";
 import PrivateRoute from "../PrivateRoute/PrivateRoute";
 import Product from "../../Pages/Product/Product";
+import Banner from "../../Pages/Banner";
 
 export const routes = createBrowserRouter([
    {
@@ -40,6 +41,10 @@ export const routes = createBrowserRouter([
                {
                   path: "/dashboard/products",
                   element: <Product />,
+               },
+               {
+                  path: "/dashboard/banners",
+                  element: <Banner />,
                },
             ],
          },
