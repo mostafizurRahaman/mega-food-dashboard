@@ -26,15 +26,18 @@ const Banner = () => {
    const [banner, setBanner] = useState({
       title: "",
       description: "",
-      offerPath: "",
-      ButtonText: "",
+      offerType: "",
+      offerId: "",
+      buttonText: "",
       imageURL: "",
+      offeredCategoryName: "",
    });
    const [errors, setErrors] = useState({
       title: "",
       description: "",
-      offerPath: "",
-      ButtonText: "",
+      offerType: "",
+      offerId: "",
+      buttonText: "",
       imageURL: "",
    });
    const { data: banners, refetch } = useQuery({
@@ -45,7 +48,84 @@ const Banner = () => {
          return data.data.banners;
       },
    });
-   const handleInputText = (e) => {
+
+   const { data: offerItems = [] } = useQuery({
+      queryKey: [
+         "offerItems",
+         banner?.offerType,
+         banner?.categoryId,
+         banner.subId,
+      ],
+      queryFn: async () => {
+         if (banner?.offerType === "category") {
+            const res = await fetch(`${baseURL}/${banner.offerType}`);
+            const data = await res.json();
+            return data.data.categories;
+         }
+         if (banner?.offerType === "sub-category") {
+            const res = await fetch(
+               `${baseURL}/${banner.offerType}?category.id=${banner?.categoryId}`
+            );
+            const data = await res.json();
+            return data.data.subCategories;
+         }
+         if (banner?.offerType === "product") {
+            const res = await fetch(
+               `${baseURL}/${banner.offerType}?subCategory.id=${banner?.subId}`
+            );
+            const data = await res.json();
+            return data.data.products;
+         }
+
+         return [];
+      },
+   });
+
+   console.log("offerItems");
+
+   const { data: categories = [] } = useQuery({
+      queryKey: ["categories"],
+      queryFn: async () => {
+         const res = await fetch(`${baseURL}/category`);
+         const data = await res.json();
+         return data.data.categories;
+      },
+   });
+
+   const { data: subCategories = [] } = useQuery({
+      queryKey: ["subCategories", banner?.categoryId],
+      queryFn: async () => {
+         if (banner?.categoryId) {
+            const res = await fetch(
+               `${baseURL}/sub-category?category.id=${banner.categoryId}`
+            );
+            const data = await res.json();
+            return data.data.subCategories;
+         }
+         return [];
+      },
+   });
+
+   console.log(banner);
+   console.log(subCategories);
+   const handleTitle = (e) => {
+      const name = e.target.name;
+      const value = e.target.value.trim().toLowerCase();
+      if (!value) {
+         setBanner({ ...banner, [name]: "" });
+         setErrors({ ...errors, [name]: `${name} shouldn't be empty` });
+      } else if (value.length < 5) {
+         setBanner({ ...banner, [name]: "" });
+         setErrors({ ...errors, [name]: `${name} should be min 5 char` });
+      } else if (value.length > 50) {
+         setBanner({ ...banner, [name]: "" });
+         setErrors({ ...errors, [name]: `${name} should be max 50 char` });
+      } else {
+         setBanner({ ...banner, [name]: value });
+         setErrors({ ...errors, [name]: "" });
+      }
+   };
+   const handleButtonText = (e) => {
       const name = e.target.name;
       const value = e.target.value.trim().toLowerCase();
       if (!value) {
@@ -57,36 +137,23 @@ const Banner = () => {
       }
    };
 
-   // const handleNumber = (e) => {
-   //    const name = e.target.name;
-   //    const value = parseFloat(e.target.value);
-   //    if (!e.target.value) {
-   //       setErrors({ ...errors, [name]: `Please provide ${name}` });
-   //       setBanner({ ...banner, [name]: "" });
-   //    } else if (!/^[+]?\d*\.?\d+$/.test(value)) {
-   //       setErrors({ ...errors, [name]: `please provide a positive number` });
-   //       setBanner({ ...banner, [name]: "" });
-   //    } else {
-   //       setErrors({ ...errors, [name]: `` });
-   //       setBanner({ ...banner, [name]: value });
-   //    }
-   // };
-
-   // const handleDiscount = (e) => {
-   //    const name = e.target.name;
-   //    const value = parseFloat(e.target.value);
-   //    if (!e.target.value) {
-   //       setErrors({ ...errors, [name]: `Please provide ${name}` });
-   //       setBanner({ ...banner, [name]: "" });
-   //    } else if (!/^(100|\d{1,2}(\.\d+)?)$/.test(value)) {
-   //       setErrors({ ...errors, [name]: `discount should be 0 to 100` });
-   //       setBanner({ ...banner, [name]: "" });
-   //    } else {
-   //       setErrors({ ...errors, [name]: `` });
-   //       setBanner({ ...banner, [name]: value });
-   //    }
-   // };
-
+   const handleDescription = (e) => {
+      const name = e.target.name;
+      const value = e.target.value.trim().toLowerCase();
+      if (!value) {
+         setBanner({ ...banner, [name]: "" });
+         setErrors({ ...errors, [name]: `${name} shouldn't be empty` });
+      } else if (value.length < 50) {
+         setBanner({ ...banner, [name]: "" });
+         setErrors({ ...errors, [name]: `${name} should be min 50 char` });
+      } else if (value.length > 120) {
+         setBanner({ ...banner, [name]: "" });
+         setErrors({ ...errors, [name]: `${name} should be max 50 char` });
+      } else {
+         setBanner({ ...banner, [name]: value });
+         setErrors({ ...errors, [name]: "" });
+      }
+   };
    const handleImageUpload = async (e) => {
       const name = e.target.name;
       const image = e.target.files[0];
@@ -118,58 +185,35 @@ const Banner = () => {
       }
    };
 
-   const handleBanner = async (e) => {
+   const createBanner = async (e) => {
       e.preventDefault();
       const {
-         name,
-         description,
-         thumbnail,
-         images,
-         categoryName,
+         offeredCategoryName,
          categoryId,
-         subCategoryName,
-         subCategoryId,
-         quantity,
-         price,
-         dealerPrice,
-         discount,
-         unit,
-         status,
+         categoryName,
+         subId,
+         subName,
+         ...others
       } = banner;
-      const newProduct = {
-         name,
-         description,
-         thumbnail,
-         images,
-         category: {
-            name: categoryName,
-            id: categoryId,
-         },
-         subCategory: {
-            name: subCategoryName,
-            id: subCategoryId,
-         },
-         unit,
-         status,
-         quantity,
-         price,
-         dealerPrice,
-         discount,
-         postedBy: {
-            name: user?.firstName + user?.lastName,
+      const newBanner = {
+         ...others,
+         createdBy: {
+            name: user?.firstName + " " + user?.lastName,
             id: user._id,
          },
+         offeredCategoryName,
       };
 
-      console.log(newProduct);
+      // console.log(newBanner);
+      console.log(newBanner);
       try {
-         const res = await fetch(`${baseURL}/product`, {
+         const res = await fetch(`${baseURL}/banner?status=active`, {
             method: "POST",
             headers: {
                "content-type": "application/json",
                authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
-            body: JSON.stringify(newProduct),
+            body: JSON.stringify(newBanner),
          });
 
          const data = await res.json();
@@ -186,7 +230,7 @@ const Banner = () => {
 
    const handleDelete = async (_id) => {
       try {
-         const res = await fetch(`${baseURL}/product/${_id}`, {
+         const res = await fetch(`${baseURL}/banner/${_id}`, {
             method: "delete",
             headers: {
                "content-type": "application/json",
@@ -226,7 +270,8 @@ const Banner = () => {
                   "title",
                   "description",
                   "banner",
-                  "offerPath",
+                  "offerType",
+                  "offerId",
                   "status",
                   "createdBy",
                   "Action",
@@ -256,7 +301,10 @@ const Banner = () => {
                         />
                      </TableCol>
                      <TableCol styles="max-w-[200px]">
-                        {banner.offerPath}
+                        {banner.offerType}
+                     </TableCol>
+                     <TableCol styles="max-w-[200px]">
+                        {banner.offerId}
                      </TableCol>
                      <TableCol
                         styles={
@@ -301,7 +349,7 @@ const Banner = () => {
                className="max:h-[80vh] overflow-y-auto"
             >
                <form
-                  onSubmit={handleBanner}
+                  onSubmit={createBanner}
                   className="flex gap-3  flex-col items-start justify-center md:justify-between bg-secondary p-7 rounded-md "
                >
                   <div className="gap-3 grid grid-cols-1 md:grid-cols-2 w-full">
@@ -314,7 +362,7 @@ const Banner = () => {
                         placeholder="Banner title"
                         label="banner title"
                         error={errors.title}
-                        onChange={handleInputText}
+                        onChange={handleTitle}
                      />
 
                      <InputSelection
@@ -325,8 +373,70 @@ const Banner = () => {
                         options={["active", "in-active"]}
                         selectOp="select status"
                      />
+                     <div className="w-full">
+                        <InputText
+                           type="text"
+                           name="buttonText"
+                           placeholder="Button Text"
+                           label="button text"
+                           error={errors.buttonText}
+                           onChange={handleButtonText}
+                        />
+                     </div>
+                     <InputSelection
+                        label="offerType"
+                        data={banner}
+                        setData={setBanner}
+                        field="offerType"
+                        options={["category", "sub-category", "product"]}
+                        selectOp="select offerType"
+                     />
+                     {(banner.offerType === "sub-category" ||
+                        banner?.offerType === "product") && (
+                        <InputSelectionObj
+                           label="select category"
+                           data={banner}
+                           setData={setBanner}
+                           selectedId="categoryId"
+                           selectedName="categoryName"
+                           options={categories}
+                           selectOp="select category"
+                        ></InputSelectionObj>
+                     )}
+                     {banner?.offerType === "product" && (
+                        <InputSelectionObj
+                           label="select subcategory"
+                           data={banner}
+                           setData={setBanner}
+                           selectedId="subId"
+                           selectedName="subName"
+                           options={subCategories}
+                           selectOp="select sub-category"
+                        ></InputSelectionObj>
+                     )}
+                     <div
+                        className={`w-full ${
+                           banner.offerType !== "sub-category" &&
+                           "md:col-span-2"
+                        }`}
+                     >
+                        <InputSelectionObj
+                           label="offer item"
+                           data={banner}
+                           setData={setBanner}
+                           selectedId="offerId"
+                           selectedName="offeredCategoryName"
+                           options={
+                              offerItems &&
+                              offerItems?.map((item) => {
+                                 return { name: item.name, _id: item._id };
+                              })
+                           }
+                           selectOp="select offer Item"
+                        ></InputSelectionObj>
+                     </div>
 
-                     <div className="w-full flex flex-col gap-1 ">
+                     <div className="w-full flex flex-col gap-1 md:col-span-2 ">
                         <label
                            htmlFor="Banner Upload"
                            className=" font-semibold text-sm capitalize"
@@ -342,16 +452,18 @@ const Banner = () => {
                         />
                      </div>
 
-                     <InputTextBox
-                        label="product description"
-                        rows={8}
-                        cols={10}
-                        name="description"
-                        placeholder="write product description"
-                        onChange={handleInputText}
-                        error={errors.description}
-                        styles="w-full"
-                     ></InputTextBox>
+                     <div className="md:col-span-2">
+                        <InputTextBox
+                           label="product description"
+                           rows={8}
+                           cols={10}
+                           name="description"
+                           placeholder="write product description"
+                           onChange={handleDescription}
+                           error={errors.description}
+                           styles="w-full"
+                        ></InputTextBox>
+                     </div>
                   </div>
 
                   <SubmitButton
@@ -362,7 +474,8 @@ const Banner = () => {
                         !banner?.description ||
                         !banner?.imageURL ||
                         !banner?.status ||
-                        !banner?.offerPath
+                        !banner?.offerType ||
+                        !banner?.offerId
                      }
                   />
                </form>

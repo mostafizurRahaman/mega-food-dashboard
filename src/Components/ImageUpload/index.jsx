@@ -45,7 +45,7 @@ const ImageUpload = ({
                      <img
                         src={image}
                         alt=""
-                        className={`${imageStyles} object-contain p-3`}
+                        className={`${imageStyles}  w-full h-full object-contain p-3`}
                      />
                   )
                ) : (
