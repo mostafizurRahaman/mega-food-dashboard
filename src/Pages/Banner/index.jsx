@@ -50,40 +50,6 @@ const Banner = () => {
       },
    });
 
-   const { data: offerItems = [] } = useQuery({
-      queryKey: [
-         "offerItems",
-         banner?.offerType,
-         banner?.categoryId,
-         banner.subId,
-      ],
-      queryFn: async () => {
-         if (banner?.offerType === "category") {
-            const res = await fetch(`${baseURL}/${banner.offerType}`);
-            const data = await res.json();
-            return data.data.categories;
-         }
-         if (banner?.offerType === "sub-category") {
-            const res = await fetch(
-               `${baseURL}/${banner.offerType}?category.id=${banner?.categoryId}`
-            );
-            const data = await res.json();
-            return data.data.subCategories;
-         }
-         if (banner?.offerType === "product") {
-            const res = await fetch(
-               `${baseURL}/${banner.offerType}?subCategory.id=${banner?.subId}`
-            );
-            const data = await res.json();
-            return data.data.products;
-         }
-
-         return [];
-      },
-   });
-
-   console.log("offerItems");
-
    const { data: categories = [] } = useQuery({
       queryKey: ["categories"],
       queryFn: async () => {
@@ -107,8 +73,38 @@ const Banner = () => {
       },
    });
 
-   console.log(banner);
-   console.log(subCategories);
+   const { data: offerItems = [] } = useQuery({
+      queryKey: [
+         "offerItems",
+         banner?.offerType,
+         banner?.categoryId,
+         banner.subId,
+      ],
+      queryFn: async () => {
+         if (banner?.offerType === "category") {
+            const res = await fetch(`${baseURL}/${banner.offerType}`);
+            const data = await res.json();
+            return data.data.categories;
+         }
+         if (banner?.offerType === "sub-category" && banner.categoryId) {
+            const res = await fetch(
+               `${baseURL}/${banner.offerType}?category.id=${banner?.categoryId}`
+            );
+            const data = await res.json();
+            return data.data.subCategories;
+         }
+         if (banner?.offerType === "product" && banner.subId) {
+            const res = await fetch(
+               `${baseURL}/${banner.offerType}?subCategory.id=${banner?.subId}`
+            );
+            const data = await res.json();
+            return data.data.products;
+         }
+
+         return [];
+      },
+   });
+
    const handleTitle = (e) => {
       const name = e.target.name;
       const value = e.target.value.trim().toLowerCase();
@@ -149,7 +145,7 @@ const Banner = () => {
          setErrors({ ...errors, [name]: `${name} should be min 50 char` });
       } else if (value.length > 120) {
          setBanner({ ...banner, [name]: "" });
-         setErrors({ ...errors, [name]: `${name} should be max 50 char` });
+         setErrors({ ...errors, [name]: `${name} should be max 120 char` });
       } else {
          setBanner({ ...banner, [name]: value });
          setErrors({ ...errors, [name]: "" });
@@ -202,7 +198,6 @@ const Banner = () => {
             name: user?.firstName + " " + user?.lastName,
             id: user._id,
          },
-
       };
 
       // console.log(newBanner);

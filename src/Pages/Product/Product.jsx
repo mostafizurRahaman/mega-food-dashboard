@@ -55,12 +55,40 @@ const Product = () => {
       thumbnail: "",
       images: "",
    });
+
+   //  product load:
    const { data: products, refetch } = useQuery({
       queryKey: ["products"],
       queryFn: async () => {
          const res = await fetch(`${baseURL}/product?page=1&limit=10`);
          const data = await res.json();
          return data.data.products;
+      },
+   });
+
+   //  category load :
+   const { data: categories = [] } = useQuery({
+      queryKey: ["categories"],
+      queryFn: async () => {
+         const res = await fetch(`${baseURL}/category`);
+         const data = await res.json();
+         return data.data.categories;
+      },
+   });
+
+   // sub category load:
+   const { data: subCategories = [] } = useQuery({
+      queryKey: ["subCategories", product.categoryId],
+      queryFn: async () => {
+         if (product.categoryId) {
+            const res = await fetch(
+               `${baseURL}/sub-category?category.id=${product?.categoryId}`
+            );
+            const data = await res.json();
+            console.log(data.data.subCategories);
+            return data.data.subCategories;
+         }
+         return [];
       },
    });
    const handleInputText = (e) => {
@@ -136,27 +164,6 @@ const Product = () => {
       }
    };
 
-   const { data: categories = [] } = useQuery({
-      queryKey: ["categories"],
-      queryFn: async () => {
-         const res = await fetch(`${baseURL}/category`);
-         const data = await res.json();
-         return data.data.categories;
-      },
-   });
-
-   const { data: subCategories = [] } = useQuery({
-      queryKey: ["subCategories", product.categoryId],
-      queryFn: async () => {
-         const res = await fetch(
-            `${baseURL}/sub-category?category.id=${product?.categoryId}`
-         );
-         const data = await res.json();
-         console.log(data.data.subCategories);
-         return data.data.subCategories;
-      },
-   });
-
    const handleUploadMultipleImage = async (e) => {
       const name = e.target.name;
       const images = e.target.files;
@@ -205,7 +212,7 @@ const Product = () => {
          categoryId,
          subCategoryName,
          subCategoryId,
-         quantity,
+         stock,
          price,
          dealerPrice,
          discount,
@@ -227,7 +234,7 @@ const Product = () => {
          },
          unit,
          status,
-         quantity,
+         stock,
          price,
          dealerPrice,
          discount,
@@ -253,7 +260,9 @@ const Product = () => {
             console.log(data);
             toast.success(data.message);
             setShowModal1(false);
+            setProduct({});
             refetch();
+            e.target.reset();
          }
       } catch (err) {
          toast.error(err.message);
@@ -273,6 +282,7 @@ const Product = () => {
          const data = await res.json();
          if (data.status === "success") {
             toast.success(data.message);
+
             refetch();
          } else {
             toast.error(data.message);
@@ -305,7 +315,7 @@ const Product = () => {
                   "price",
                   "dealer price",
                   "discount",
-                  "quantity",
+                  "stock",
                   "unit",
                   "status",
                   "createdAt",
@@ -423,10 +433,10 @@ const Product = () => {
                      />
                      <InputText
                         type="number"
-                        name="quantity"
-                        placeholder="product quantity"
-                        label="product quantity"
-                        error={errors.quantity}
+                        name="stock"
+                        placeholder="product stock"
+                        label="product stock"
+                        error={errors.stock}
                         onChange={handleNumber}
                      />
                      <InputText
@@ -513,7 +523,7 @@ const Product = () => {
                         !product?.categoryName ||
                         !product?.subCategoryId ||
                         !product?.subCategoryName ||
-                        !product?.quantity ||
+                        !product?.stock ||
                         !product?.unit ||
                         !product?.status ||
                         !product?.images?.length ||

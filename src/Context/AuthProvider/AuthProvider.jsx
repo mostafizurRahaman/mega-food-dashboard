@@ -8,6 +8,7 @@ const AuthProvider = ({ children }) => {
    const [loading, setLoading] = useState(true);
    const [isOpen, setIsOpen] = useState(false);
    const accessToken = localStorage.getItem("accessToken");
+   
 
    //  user status observer:
    useEffect(() => {

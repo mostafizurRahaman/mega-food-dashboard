@@ -55,7 +55,7 @@ const ImageUpload = ({
             </div>
          </div>
          {error && (
-            <p className="text-secondary text-xl ps-5 capitalize">
+            <p className="text-red-500 text-xs ps-5 capitalize">
                {error && error}
             </p>
          )}
